@@ -109,7 +109,7 @@ def uploadToDefectDojo(is_new_import, dojo_token, url, product_name, engagement_
     if r.status_code != 201:
         sys.exit(f'Falha ao importar scan: {r.text}')
     else:
-        sys.exit(f'Report importado com sucesso: {r.text}')
+        print(f'Report importado com sucesso: {r.text}')
 
 if __name__ == "__main__":
     if len(sys.argv) == 9:
