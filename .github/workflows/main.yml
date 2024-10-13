@@ -31,3 +31,16 @@ jobs:
     - name: Run SemGrep Import
       run: |
         python scripts/semgrep.py --product "DVWA" --engagement "github-dvwa" --report semgrep.json --dojo_token 94cac6406490ec1fe433dd062cc8c6e178114118
+
+    - name: Run DependencyCheck Scan
+      run: |
+        curl -O https://storageappsafebr.s3.us-east-2.amazonaws.com/dpcheck_database.gz
+        tar -xzf dpcheck_database.gz
+        echo "Execute Dependency Check Scan"
+        curl -sSfL https://github.com/jeremylong/DependencyCheck/releases/download/v10.0.4/dependency-check-10.0.4-release.zip -o dependency-check.zip
+        unzip -o dependency-check.zip -d dependency-check
+        ./dependency-check/dependency-check/bin/dependency-check.sh --project 'github-dvwa' --scan . --noupdate --data . --format XML --out . -o dependency-check-report.xml --disableAssembly --disableRubygems --disableBundleAudit --nodeAuditSkipDevDependencies --nodePackageSkipDevDependencies --exclude ./node_modules/*
+    
+    - name: Run DependencyCheck Import
+      run: |
+        python scripts/dpcheck.py --product "DVWA" --engagement "github-dvwa" --report dependency-check-report.xml --dojo_token 94cac6406490ec1fe433dd062cc8c6e178114118
