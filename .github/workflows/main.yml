@@ -21,7 +21,6 @@ jobs:
 
     - name: Install dependencies
       run: |
-        apt-get update -y
         pip3 install requests
         pip3 install semgrep
 
