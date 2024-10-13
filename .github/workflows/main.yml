@@ -1,0 +1,34 @@
+name: ShiftLeft Scan
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  Scan-Build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Setup Python
+      uses: actions/setup-python@v5.2.0
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        apt-get update -y
+        pip3 install requests
+        pip3 install semgrep
+
+    - name: Run SemGrep Scan
+      run: |
+        semgrep scan --config auto --exclude-rule=html.security.plaintext-http-link.plaintext-http-link --json --output=semgrep.json
+
+    - name: Run SemGrep Import
+      run: |
+        python scripts/semgrep.py --product "DVWA" --engagement "github-dvwa" --report semgrep.json --dojo_token 94cac6406490ec1fe433dd062cc8c6e178114118
